@@ -214,12 +214,37 @@ Provides thorough, professional feedback as if submitting a formal pull request 
 
 These commands are located in `.claude/commands/cwp/` and are automatically available in Claude Code when you use the `cwp:` namespace.
 
+## Project Structure
+
+### `.claude/commands/cwp/`
+Custom slash commands for Claude Code. Each command is a `.md` file with frontmatter and a prompt.
+
+### `.claude/agents/`
+Custom agent definitions that extend Claude Code's capabilities:
+
+- **gemini-cli.md** - A routing subagent that integrates Google's Gemini model for long-context reasoning and deep code analysis. It acts as a pure pass-through router, collecting file paths and passing tasks to Gemini via the `gemini-cli` wrapper script.
+
+### `scripts/`
+Utility scripts for enhanced functionality:
+
+- **gemini-cli/** - TypeScript wrapper for calling Google's Gemini model from Claude subagents
+  - `gemini-cli.ts` - Main CLI wrapper that formats requests for Gemini and normalizes responses
+  - `build.sh` - Build script to compile and install the CLI tool to `~/.local/bin`
+  - **Usage**: `echo '<payload-json>' | gemini-cli --task "<task>" --stdin`
+  - **Requirements**: Node.js, ts-node (or bun), and the official `gemini` CLI installed and authenticated
+
 ## Contributing
 
 To add new commands:
 1. Create a new `.md` file in `.claude/commands/cwp/`
 2. Add frontmatter with `description`, `argument-hint`, and optional `model` specification
 3. Write the command prompt
+4. Update this README with documentation
+
+To add new agents:
+1. Create a new `.md` file in `.claude/agents/`
+2. Add frontmatter with `name`, `description`, `tools`, `model`, and `permissionMode`
+3. Define the agent's behavior and constraints
 4. Update this README with documentation
 
 ## Command Structure
@@ -234,4 +259,21 @@ model: sonnet|haiku|opus  # Optional, defaults to sonnet
 ---
 
 # Command prompt content here
+```
+
+## Agent Structure
+
+Each agent file follows this structure:
+
+```markdown
+---
+name: agent-name
+description: >
+  Brief description of what the agent does
+tools: Read, Write, Bash
+model: sonnet|haiku|opus
+permissionMode: default|strict
+---
+
+# Agent instructions and behavior definition here
 ```
